@@ -1,126 +1,160 @@
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
-// --- Data Classes ---
-data class Employee(
-    val employeeId: Int,
+
+fun parseDateTime(input: String?): LocalDateTime? {
+    return try {
+        if (input.isNullOrBlank()) null
+        else LocalDateTime.parse(input)  // Uses ISO_LOCAL_DATE_TIME format
+    } catch (_: DateTimeParseException) {
+        println("Invalid date-time format. Expected: yyyy-MM-ddTHH:mm (e.g., 2025-07-29T09:30)")
+        null
+    }
+}
+
+data class DataEmployee(
+    val id: Int,
     val firstName: String,
     val lastName: String,
     val jobRole: String,
     val managerId: Int
 )
 
-data class Attendance(
+data class DataAttendance(
     val employeeId: Int,
     val dateTimeOfCheckIn: LocalDateTime
 )
 
-// --- Storage Lists ---
-val employeeList = mutableListOf<Employee>()
-val checkInList = mutableListOf<Attendance>()
+class Employee{
+    private val employeeList = mutableListOf<DataEmployee>()
+    private var id = 1001  // Initial employee ID
 
-// --- Perform Check-In ---
-fun checkIn(id: Int, dateTimeInput: String?) {
-    val dateTime = parseDateTimeOrNow(dateTimeInput) ?: return
-    val employee = validateCheckIn(id, dateTime) ?: return
+    fun addEmployee(
+        firstName: String,
+        lastName: String,
+        jobRole: String,
+        managerId: Int
+    ) {
+        val newEmployee = DataEmployee(id, firstName, lastName, jobRole, managerId)
+        employeeList.add(newEmployee)
+        id++
+    }
 
-    checkInList.add(Attendance(id, dateTime))
-    println(" Checked in: ${employee.firstName} ${employee.lastName} | Role: ${employee.jobRole} | ManagerID: ${employee.managerId}")
-    println(" Check-in time: ${dateTime.format(dateTimeFormatter)}")
+    fun getAllEmployees(): List<DataEmployee> {
+        return employeeList
+    }
+
+    fun exists(id: Int): Boolean {
+        return employeeList.any { it.id == id }
+    }
+
 }
 
-// --- Formatter ---
-val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+class Attendance{
+    val checkInList = mutableListOf<DataAttendance>()
 
-// --- Parse DateTime or Use Current ---
-fun parseDateTimeOrNow(input: String?): LocalDateTime? {
-    return if (input.isNullOrBlank()) {
-        LocalDateTime.now()
-    } else {
-        try {
-            val parsed = LocalDateTime.parse(input, dateTimeFormatter)
-            if (parsed.isAfter(LocalDateTime.now())) {
-                println(" Date-time cannot be in the future.")
-                null
-            } else {
-                parsed
-            }
-        } catch (e: DateTimeParseException) {
-            println(" Invalid format. Use YYYY-MM-DD HH:MM (e.g., 2025-07-29 09:30)")
-            null
+    fun hasAlreadyCheckedIn(employeeId: Int, date: LocalDate): Boolean {
+        return checkInList.any {
+            it.employeeId == employeeId && it.dateTimeOfCheckIn.toLocalDate() == date
         }
     }
+
+    fun addCheckIn(employeeId: Int, dateTime: LocalDateTime) {
+        checkInList.add(DataAttendance(employeeId, dateTime))
+    }
+
+    fun getAllCheckedInEmployees(): List<DataAttendance> {
+        return checkInList
+    }
 }
 
-// --- Validate Check-In ---
-fun validateCheckIn(id: Int, dateTime: LocalDateTime): Employee? {
-    val employee = employeeList.find { it.employeeId == id }
-
-    if (employee == null) {
-        println(" Employee with ID $id not found.")
-        return null
-    }
-
-    val alreadyCheckedIn = checkInList.any {
-        it.employeeId == id && it.dateTimeOfCheckIn.toLocalDate() == dateTime.toLocalDate()
-    }
-
-    if (alreadyCheckedIn) {
-        println(" Already checked in on ${dateTime.toLocalDate()}.")
-        return null
-    }
-
-    return employee
-}
-
-// --- Main Function ---
 fun main() {
-    // Sample Employees
-    employeeList.add(Employee(1, "Alice", "Johnson", "Developer", 121))
-    employeeList.add(Employee(2, "Tom", "Clark", "Tester", 121))
-    employeeList.add(Employee(3, "Sara", "Williams", "Project Manager", 100))
-    employeeList.add(Employee(4, "David", "Lee", "Designer", 403))
-    employeeList.add(Employee(5, "Emma", "Davis", "Developer", 121))
+    val empManager = Employee()
+    val attendanceManager = Attendance()
 
     while (true) {
         println("\n==== Employee Attendance System ====")
-        println("1. Check In")
-        println("2. Exit")
+        println("1. Add Employee")
+        println("2. View All Employees")
+        println("3. View All CheckedIn-Employees")
+        println("4. Check In")
+        println("5. Exit")
         print("Enter your choice: ")
-        val choice = readlnOrNull()
+        when (readlnOrNull()?.trim()) {
 
-        when (choice) {
             "1" -> {
-                print("Enter Employee ID: ")
-                val idInput = readlnOrNull()
-                val id = idInput?.toIntOrNull()
+                print("Enter First Name: ")
+                val firstName = readlnOrNull()?.trim().orEmpty()
 
-                if (id == null) {
-                    println(" Invalid ID. Please enter a numeric value.")
+                print("Enter Last Name: ")
+                val lastName = readlnOrNull()?.trim().orEmpty()
+
+                print("Enter Job Role: ")
+                val role = readlnOrNull()?.trim().orEmpty()
+
+                print("Enter Manager ID: ")
+                val managerId = readlnOrNull()?.toIntOrNull()
+                if (managerId == null) {
+                    println(" Invalid Manager ID.")
                     continue
                 }
 
-                val employeeExists = employeeList.any { it.employeeId == id }
-                if (!employeeExists) {
-                    println(" No employee found with ID $id.")
-                    continue
-                }
-
-                print("Enter check-in date & time (YYYY-MM-DD HH:MM) or press Enter for current time: ")
-                val dateTimeInput = readlnOrNull()
-
-                checkIn(id, dateTimeInput)
+                empManager.addEmployee( firstName, lastName, role, managerId)
+                println("Employee $firstName added successfully ")
             }
 
             "2" -> {
-                println("Exiting... Goodbye!")
+                val employees = empManager.getAllEmployees()
+                if (employees.isEmpty()) {
+                    println(" No employees found.")
+                } else {
+                    println(" Employee List:")
+                    employees.forEach {
+                        println(" ID: ${it.id}, Name: ${it.firstName} ${it.lastName}, Role: ${it.jobRole}, Manager ID: ${it.managerId}")
+                    }
+                }
+            }
+
+            "3" -> {
+                val checkIns = attendanceManager.getAllCheckedInEmployees()
+                if (checkIns.isEmpty()) {
+                    println(" No Employees checked in.")
+                } else {
+                    println(" Check-In Records:")
+                    checkIns.forEach {
+                        println(" ID: ${it.employeeId}, DateTime: ${it.dateTimeOfCheckIn}")
+                    }
+                }
+            }
+
+            "4" -> {
+                print("Enter Employee ID for Check-In: ")
+                val id = readlnOrNull()?.toIntOrNull()
+                if (id == null || !empManager.exists(id)) {
+                    println(" Employee Id not found.")
+                    continue
+                }
+
+                print("Enter DateTime (yyyy-MM-ddTHH:mm) or press Enter for currentDateTime: ")
+                val dateTimeInput = readlnOrNull()
+                val parsedDateTime = parseDateTime(dateTimeInput) ?: LocalDateTime.now()
+
+                if (attendanceManager.hasAlreadyCheckedIn(id, parsedDateTime.toLocalDate())) {
+                    println("Employee $id already checked in today.")
+                } else {
+                    attendanceManager.addCheckIn(id, parsedDateTime)
+                    println("Check-in successful at $parsedDateTime")
+                }
+            }
+
+            "5" -> {
+                println("Exiting...")
                 break
             }
 
-            else -> {
-                println(" Invalid choice. Please select 1 or 2.")
-            }
+            else -> println("Invalid choice. Try again.")
         }
     }
 }
+
