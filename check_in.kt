@@ -18,7 +18,7 @@ data class DataEmployee(
     val firstName: String,
     val lastName: String,
     val jobRole: String,
-    val managerId: Int
+    val managerId: String
 )
 
 data class DataAttendance(
@@ -34,7 +34,7 @@ class Employee{
         firstName: String,
         lastName: String,
         jobRole: String,
-        managerId: Int
+        managerId: String
     ) {
         val newEmployee = DataEmployee(id, firstName, lastName, jobRole, managerId)
         employeeList.add(newEmployee)
@@ -94,7 +94,7 @@ fun main() {
                 val role = readlnOrNull()?.trim().orEmpty()
 
                 print("Enter Manager ID: ")
-                val managerId = readlnOrNull()?.toIntOrNull()
+                val managerId = readlnOrNull()
                 if (managerId == null) {
                     println(" Invalid Manager ID.")
                     continue
