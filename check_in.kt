@@ -23,6 +23,7 @@ fun getCurrentTime(): String = LocalTime.now().toString()
 
 fun checkIn(id: Int) {
     // Check if employeeId is valid and add it to checkinlist
+    try {
     if (validateCheckIn(id)) {
         val employee = employeeList.find { it.employeeId == id }
 
@@ -33,7 +34,9 @@ fun checkIn(id: Int) {
             println("Checked in: ${employee.firstName} ${employee.lastName}, Role: ${employee.jobRole} , ManagerID: ${employee.managerId}")
         }
     }
-}
+} catch (e: Exception) {
+        println(" Error during check-in: ${e.message}")
+    } }
 //valid employee ckecks valid check in or already checked in or invalid check in
 fun validateCheckIn(id: Int): Boolean {
     val employee = employeeList.find { it.employeeId == id }
@@ -53,13 +56,14 @@ fun validateCheckIn(id: Int): Boolean {
         false
     }
 }
+
 fun main() {
     // Sample data
-    employeeList.add(Employee(1, "Ajith", "Kumar", "Developer", 121))
-    employeeList.add(Employee(2, "Tom", "Cruise", "Tester", 121))
-    employeeList.add(Employee(3, "Tony", "Stark", "Project Manager", 100))
-    employeeList.add(Employee(4, "Dwayne", "Johnson", "Designer", 403))
-    employeeList.add(Employee(5, "Emma", "Watson", "Developer", 121))
+    employeeList.add(Employee(1, "Alice", "Johnson", "Developer", 121))
+    employeeList.add(Employee(2, "Tom", "Clark", "Tester", 121))
+    employeeList.add(Employee(3, "Sara", "Williams", "Project Manager", 100))
+    employeeList.add(Employee(4, "David", "Lee", "Designer", 403))
+    employeeList.add(Employee(5, "Emma", "Davis", "Developer", 121))
 
     while (true) {
         println("Enter employee ID to check in:")
