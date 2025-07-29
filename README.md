@@ -4,7 +4,7 @@
 
   This document explains the basic structure and logic for the **Check-In** part of the CLI app.
 
-## 1. Employee Data
+## Employee Data
 
 We created a data class called `Employee` with:
 
@@ -17,7 +17,7 @@ We created a data class called `Employee` with:
 All employees are stored in a list called `employeeList`.
 
 
-## 2. Attendance Data
+## Attendance Data
 
 Another data class `Attendance` stores:
 
@@ -43,14 +43,14 @@ We created two functions:
 
 ---
 
-## 4. Tools Used
+## Tools Used
 
 - **LocalDate.now()** – to get today’s date
 - **LocalTime.now()** – to get the current time
 
 ---
 
-## 5. Notes
+## Notes
 
 - One check-in allowed per employee per day.
 - Check-in data is stored in memory for now (not in files).
