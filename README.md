@@ -1,63 +1,60 @@
-# PieQ_Attendance_cli
+# 🕒 PieQ_Attendance_cli
 
 ## 📌 Overview
 
-This project is a Kotlin-based CLI (Command Line Interface) application that allows employees to **check in** using their ID and date-time. It validates input, prevents duplicate check-ins per day, and provides feedback to the user.
+**PieQ_Attendance_cli** is a Kotlin-based **Command Line Interface (CLI)** application designed to manage **employee attendance** through check-in records. It ensures that:
+
+- Employees can check in by entering their ID and date-time.
+- Duplicate check-ins (on the same day) are prevented.
+- Input is validated with clear feedback messages.
 
 ---
 
 ## 👥 Employee Data
 
-We use a data class called `Employee` with the following fields:
+We use a data class called `DataEmployee` with the following fields:
 
-- `employeeId`: Unique ID for the employee  
-- `firstName`: First name of the employee  
-- `lastName`: Last name of the employee  
-- `jobRole`: Employee's job title  
-- `managerId`: Manager's ID  
+- `id`: Unique identifier for each employee (auto-incremented)
+- `firstName`: First name of the employee
+- `lastName`: Last name of the employee
+- `jobRole`: Employee's job title
+- `managerId`: Alphanumeric ID of the employee's manager (e.g., MG100, A123)
 
-All employees are stored in a mutable list named `employeeList`.
+
+
+Employees are stored in a list named `employeeList` (internal to the `Employee` class).
+
+### Functions in `Employee`:
+
+- `addEmployee(firstName, lastName, jobRole, managerId)`: Adds a new employee.
+- `getAllEmployees()`: Returns a list of all registered employees.
+- `exists(id)`: Returns `true` if an employee with the given ID exists.
 
 ---
 
 ## 📅 Attendance Data
 
-We use a data class called `Attendance` with the following fields:
+We use a data class called `DataAttendance` with the following fields:
 
-- `employeeId`: ID of the employee who checked in  
-- `dateTimeOfCheckIn`: The exact date and time of check-in  
+- `employeeId`: ID of the employee who checked in
+- `dateTimeOfCheckIn`: The exact date and time of check-in (as `LocalDateTime`)
 
-All check-in records are stored in a mutable list named `checkInList`.
+Check-in records are stored in `checkInList` (inside the `Attendance` class).
 
----
+### Functions in `Attendance`:
 
-## ✅ Core Functions
-
-### 🔹 checkIn(id: Int, dateTimeInput: String?)
-
-- Parses the date-time input (or uses current time).
-- Validates the employee ID.
-- Checks whether the employee has already checked in on the same date.
-- If valid, saves the check-in record to `checkInList`.
-- Displays a confirmation message.
+- `addCheckIn(employeeId, dateTime)`: Adds a new check-in entry.
+- `getAllCheckedInEmployees()`: Returns all check-in records.
+- `hasAlreadyCheckedIn(employeeId, date)`: Prevents multiple check-ins on the same day.
 
 ---
 
-### 🔹 parseDateTimeOrNow(input: String?): LocalDateTime?
+## 🧠 Core Logic Functions
 
-- If the input is blank, uses `LocalDateTime.now()`.
-- If input is provided, parses it using the pattern `yyyy-MM-dd HH:mm`.
-- If the input date-time is in the future, it is rejected.
-- Invalid formats are handled with an error message.
+### 🔹 `parseDateTime(input: String?): LocalDateTime?`
 
-Example error:  
-`Invalid format. Use YYYY-MM-DD HH:MM (e.g., 2025-07-29 09:30)`
+- Parses user input in ISO format: `yyyy-MM-ddTHH:mm`.
+- If the input is blank, returns `null`.
+- If parsing fails, an error message is shown.
 
----
 
-### 🔹 validateCheckIn(id: Int, dateTime: LocalDateTime): Employee?
-
-- Checks if the employee exists in `employeeList`.
-- Verifies if the employee already checked in on the given date.
-- Returns the employee object if validation passes.
-- otherwise null
