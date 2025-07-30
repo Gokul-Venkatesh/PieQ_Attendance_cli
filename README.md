@@ -49,7 +49,7 @@ Check-in records are stored in `checkInList` (inside the `Attendance` class).
 
 ---
 
-## Parse Functions
+## Parse Function
 
 ### 🔹 `parseDateTime(input: String?): LocalDateTime?`
 
