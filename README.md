@@ -28,7 +28,7 @@ Employees are stored in a list named `employeeList` (internal to the `Employee` 
 
 - `addEmployee(firstName, lastName, jobRole, managerId)`: Adds a new employee.
 - `getAllEmployees()`: Returns a list of all registered employees.
-- `exists(id)`: Returns `true` if an employee with the given ID exists.
+- `employeeExists(id)`: Returns `true` if an employee with the given ID exists.
 
 ---
 
@@ -43,7 +43,7 @@ Check-in records are stored in `checkInList` (inside the `Attendance` class).
 
 ### Functions in `Attendance`:
 
-- `addCheckIn(employeeId, dateTime)`: Adds a new check-in entry.
+- `addCheckedInEmployees(employeeId, dateTime)`: Adds a new check-in entry.
 - `getAllCheckedInEmployees()`: Returns all check-in records.
 - `hasAlreadyCheckedIn(employeeId, date)`: Prevents multiple check-ins on the same day.
 
