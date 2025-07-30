@@ -2,7 +2,6 @@ import java.time.LocalDateTime
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
-
 fun parseDateTime(input: String?): LocalDateTime? {
     return try {
         if (input.isNullOrBlank()) null
@@ -35,10 +34,13 @@ class Employee{
         lastName: String,
         jobRole: String,
         managerId: String
-    ) {
+    ): Int {
         val newEmployee = DataEmployee(id, firstName, lastName, jobRole, managerId)
         employeeList.add(newEmployee)
+        val assignedid = id
         id++
+        return assignedid
+
     }
 
     fun getAllEmployees(): List<DataEmployee> {
@@ -100,8 +102,8 @@ fun main() {
                     continue
                 }
 
-                empManager.addEmployee( firstName, lastName, role, managerId)
-                println("Employee $firstName added successfully ")
+                val assignedid = empManager.addEmployee( firstName, lastName, role, managerId)
+                println("Employee $firstName added successfully with Id : $assignedid ")
             }
 
             "2" -> {
@@ -139,14 +141,16 @@ fun main() {
                 print("Enter DateTime (yyyy-MM-ddTHH:mm) or press Enter for currentDateTime: ")
                 val dateTimeInput = readlnOrNull()
                 val parsedDateTime = parseDateTime(dateTimeInput) ?: LocalDateTime.now()
-
-                if (attendanceManager.hasAlreadyCheckedIn(id, parsedDateTime.toLocalDate())) {
-                    println("Employee $id already checked in today.")
-                } else {
-                    attendanceManager.addCheckIn(id, parsedDateTime)
-                    println("Check-in successful at $parsedDateTime")
-                }
-            }
+                if (parsedDateTime.isAfter(LocalDateTime.now())) {
+                    println(" Date-time cannot be in the future.")
+                }else {
+                    if (attendanceManager.hasAlreadyCheckedIn(id, parsedDateTime.toLocalDate())) {
+                        println("Employee $id already checked in today.")
+                    } else {
+                        attendanceManager.addCheckIn(id, parsedDateTime)
+                        println("Employee $id Check-in successful at $parsedDateTime")
+                    }
+                }}
 
             "5" -> {
                 println("Exiting...")
